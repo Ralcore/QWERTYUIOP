@@ -1,9 +1,21 @@
 package org.neocities.ralcore;
 
+import com.opencsv.CSVReaderHeaderAware;
+
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import processing.core.PApplet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
+import com.opencsv.CSVReader;
 
 public class Main extends PApplet {
 
@@ -16,26 +28,35 @@ public class Main extends PApplet {
     // Millisecond leniency for a note to get missed...
     int leniencyMiss = 250;
     // ...and for a 40...
-    int leniency40 = 75;
+    int leniency40 = 175;
     // ...and for an 80.
-    int leniency80 = 25;
+    int leniency80 = 100;
+    // The BPM of the chart, which will be defined in the chart's metadata.
+    float bpm = 120;
 
     public class Note {
-        int time;
+        float time;
         int key;
         int row;
         public void noteTick(){
             // Assuming for now that we know exactly what time the note should be hit on to not calculate it, and that the song starts when the program starts.
             // TODO: Not do those things.
+            textSize(32);
+            textAlign(CENTER, TOP);
             if (millis() - leniencyMiss > time) {
                 // If the note is deemed old, destroy it.
                 rows[row].remove(0);
             } else {
                 // Drawing note
-                rect((time - millis()) * scrollSpeed / 10, rowOffsetH+(row-1)*rowHeight, 10, 50);
+                // A - x-coord: position based on when note should be hit, multiplied by an arbitrary scalar of the scrollspeed, minus half the note width.
+                // B - y-coord: the height of the note plus the row number times how high each note is.
+                fill(255, 255, 255);
+                rect((time - millis()) * scrollSpeed / 10 - 25, rowOffsetH+(row-1)*rowHeight, 50, 50);
+                fill(0, 0, 0);
+                text((char)key, (time - millis()) * scrollSpeed / 10, rowOffsetH+(row-1)*rowHeight);
             }
         }
-        public Note(Integer defTime, Integer defKey, Integer defRow) {
+        public Note(Float defTime, Integer defKey, Integer defRow) {
             time = defTime;
             key = defKey;
             row = defRow;
@@ -58,16 +79,39 @@ public class Main extends PApplet {
         for (int i = 0; i < 3; i++) {
             rows[i] = new ArrayList<Note>();
         }
-        // Temporary hard-coded chart code
-        rows[0].add(new Note(2500, (int) 'Z', 0));
-        rows[0].add(new Note(2750, (int) 'X', 0));
-        rows[2].add(new Note(3000, (int) 'Z', 2));
-        rows[2].add(new Note(3250, (int) 'X', 2));
-        rows[0].add(new Note(3500, (int) 'Z', 0));
-        rows[0].add(new Note(3750, (int) 'X', 0));
-        rows[2].add(new Note(4000, (int) 'Z', 2));
-        rows[2].add(new Note(4250, (int) 'X', 2));
-
+        // Importing chart info using simple-json, yonked from here: https://www.tutorialspoint.com/how-to-read-the-contents-of-a-json-file-using-java
+        try {
+            // Creating JSONParser object and setting up file
+            FileReader chartJSON = new FileReader("Charts/1 HALLEY LABS R&D - catching up (first wip)/metadata.json");
+            JSONParser jsonParser = new JSONParser();
+            // Parsing JSON contents
+            JSONObject jsonContents = (JSONObject) jsonParser.parse(chartJSON);
+            // TODO: make this read title and artist and that kinda funky thing; for now we just read the BPM
+            bpm = ((Double) jsonContents.get("bpm")).floatValue();
+            chartJSON.close();
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+        // Import chart from file using OpenCSV
+        // Setting up the list to hold the chart temporarily:
+        List<String[]> importedChart = new ArrayList<String[]>();
+        try {
+            // Creating file and csv reader objects
+            FileReader chartFile = new FileReader("Charts/1 HALLEY LABS R&D - catching up (first wip)/normal.csv");
+            CSVReaderHeaderAware csv = new CSVReaderHeaderAware(chartFile);
+            // Reading in file
+            importedChart = csv.readAll();
+            // TODO: potentially rework so that this reads line-by-line for efficiency
+            // TODO: rework so that bpm changes per chart
+            // Iterating through imported CSV, using data to create note objects in rows.
+            for (int i = 0; i < importedChart.size(); i++) {
+                rows[Integer.parseInt(importedChart.get(i)[2])].add(new Note(Float.parseFloat(importedChart.get(i)[0])*(60000/bpm), (int) importedChart.get(i)[1].charAt(0), Integer.parseInt(importedChart.get(i)[2])));
+            }
+            csv.close();
+            chartFile.close();
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
     }
 
     public void draw() {
