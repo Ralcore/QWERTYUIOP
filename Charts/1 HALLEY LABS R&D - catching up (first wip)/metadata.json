@@ -1,7 +1,8 @@
 {
 	"title": "catching up (first wip)",
 	"artist": "HALLEY LABS R&D",
-	"bpm": 120.0,
+	"bpm": 130.0,
+	"offset": 1080.0,
 	"difficulties": [
 		"normal",
 	]
