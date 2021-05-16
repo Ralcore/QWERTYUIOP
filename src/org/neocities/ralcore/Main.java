@@ -117,6 +117,23 @@ public class Main extends PApplet {
                     rows[i].get(j).noteTick();
                 }
             }
+            // Health management
+            if (health > 100) {
+                health = 100;
+            } else if (health <= 0) {
+                gameEnd(true);
+            }
+            System.out.println(health);
+        }
+
+        public void gameEnd(Boolean failed) {
+            // Making sure song is over
+            chartAudio.stop();
+            if (failed) {
+                gameState = "failed";
+            } else {
+                gameState = "pass";
+            }
         }
 
         public void checkNote() {
@@ -134,27 +151,145 @@ public class Main extends PApplet {
                 // If the hit time is not outside the miss leniency, then we know the note is a hit.
                 if (keyCode != rows[currentRow].get(0).key || relativeTime < rows[currentRow].get(0).time - leniency40 || relativeTime > rows[currentRow].get(0).time + leniency40) {
                     // If the wrong key is hit, or the note is hit outside the 40 leniency, it's a miss.
-                    print("Miss!");
-                    health -= 5;
+                    miss();
                 } else if (relativeTime < rows[currentRow].get(0).time - leniency80 || relativeTime > rows[currentRow].get(0).time + leniency80) {
                     // If the note is outside the 80 leniency, it's a 40.
-                    print("40!");
-                    score += 40;
-                    health += 1;
+                    hit40();
                 } else {
                     //Otherwise, it's an 80.
-                    print("80!");
-                    score += 80;
-                    health += 2;
+                    hit80();
                 }
                 rows[currentRow].remove(0);
-                if (health > 100) {
-                    health = 100;
-                } else if (health <= 0) {
-                    // TODO: end game code
-                    gameState = "dead";
-                }
             }
+        }
+
+        public void miss() {
+            print("Miss!");
+            health -= 5;
+        }
+
+        public void hit40() {
+            print("40!");
+            score += 40;
+            health += 1;
+        }
+
+        public void hit80() {
+            print("80!");
+            score += 80;
+            health += 2;
+        }
+    }
+
+    public class menu {
+        menuItem[] items;
+        int selectedItem;
+
+        public menu() {
+            selectedItem = 0;
+            items = new menuItem[0];
+        }
+
+        public void addItem(String itemText) {
+            menuItem[] newArray = new menuItem[items.length + 1];
+            for (int i = 0; i < items.length; i++) {
+                newArray[i] = items[i];
+            }
+            newArray[newArray.length - 1] = new menuItem(itemText);
+            items = newArray;
+        }
+
+        public void addItem(String itemText, String itemAction) {
+            menuItem[] newArray = new menuItem[items.length + 1];
+            for (int i = 0; i < items.length; i++) {
+                newArray[i] = items[i];
+            }
+            newArray[newArray.length - 1] = new menuButton(itemText, itemAction);
+            items = newArray;
+        }
+
+        public void draw() {
+            for (int i = 0; i < items.length; i++) {
+                items[i].drawListItem(i, (i == selectedItem));
+            }
+        }
+        public void navigate(boolean moveUp) {
+            // Not selecting text items
+            do {
+                selectedItem = (moveUp) ? selectedItem - 1 : selectedItem + 1;
+                if (selectedItem == -1) {
+                    selectedItem = items.length-1;
+                } else if (selectedItem == items.length) {
+                    selectedItem = 0;
+                }
+            } while (!(items[selectedItem] instanceof menuButton));
+        }
+        public void confirm() {
+            switch (((menuButton) items[selectedItem]).itemAction) {
+                // The actions on the game's main menu
+                case "openSongScreen": break;
+                case "quitGame": break;
+                // Actions on the game's song select
+                case "openDiffScreen": break;
+                case "closeSongScreen": break;
+                // Actions on the game's difficulty select
+                case "startPlaying": break;
+                case "closeDiffScreen": break;
+                case "itemAction":
+                    System.out.println("hello");
+                    break;
+            }
+        }
+    }
+
+    public class menuItem {
+        int[] defaultColor = {204, 136, 184};
+        static final int itemHeight = 32;
+        String itemText;
+
+        public menuItem() {
+            this.itemText = "";
+        }
+
+        public menuItem(String itemText) {
+            this.itemText = itemText;
+        };
+
+        public void drawListItem(int itemPosition, boolean selected) {
+            // Draw with default text color.
+            fill(defaultColor[0], defaultColor[1], defaultColor[2]);
+            // Draw the text
+            drawListItemText(itemPosition);
+        }
+
+        public void drawListItemText(int itemPosition) {
+            textSize(16);
+            text(itemText, 10, 64 + 16*itemPosition);
+        }
+    }
+
+    public class menuButton extends menuItem {
+        int[] selectedColor = {211, 14, 155};
+        String itemAction;
+
+        public menuButton() {
+            super();
+            this.itemAction = null;
+        }
+
+        public menuButton(String itemText, String itemAction){
+            super(itemText);
+            this.itemAction = itemAction;
+        }
+
+        public void drawListItem(int itemPosition, boolean selected) {
+            // Choose colour based on whether button is selected or not
+            if (selected) {
+                fill(selectedColor[0], selectedColor[1], selectedColor[2]);
+            } else {
+                fill(defaultColor[0], defaultColor[1], defaultColor[2]);
+            }
+            drawListItemText(itemPosition);
         }
     }
 
@@ -163,8 +298,6 @@ public class Main extends PApplet {
         int key;
         int row;
         public void noteTick(){
-            // Assuming for now that we know exactly what time the note should be hit on to not calculate it, and that the song starts when the program starts.
-            // TODO: Not do those things.
             textSize(32);
             textAlign(CENTER, TOP);
             if (currentGameInstance.relativeTime - currentGameInstance.leniencyMiss > time) {
@@ -172,8 +305,9 @@ public class Main extends PApplet {
                 System.out.println(time);
                 System.out.println(currentGameInstance.leniencyMiss);
 
-                // If the note is deemed old, destroy it.
+                // If the note is deemed old, destroy it and count a miss.
                 currentGameInstance.rows[row].remove(0);
+                currentGameInstance.miss();
             } else {
                 // Drawing note
                 // A - x-coord: position based on when note should be hit, multiplied by an arbitrary scalar of the scrollspeed, minus half the note width.
@@ -202,13 +336,23 @@ public class Main extends PApplet {
         PApplet.runSketch(processingArgs, mySketch);
     }
 
+    menu currentMenu;
+
     public void settings() {
         size(400, 400);
         smooth();
+        currentMenu = new menu();
+        currentMenu.addItem("Hello world!");
+        currentMenu.addItem("This is a button!", "itemAction");
+        currentMenu.addItem("This is a button!", "itemAction");
+        currentMenu.addItem("This is a button!", "itemAction");
+        currentMenu.addItem("This is a button!", "itemAction");
     }
 
     public void draw() {
-        if (millis() > 100 && gameState != "playing") {
+
+        currentMenu.draw();
+/*        if (millis() > 100 && gameState != "playing") {
             currentGameInstance = new gameInstance();
             currentGameInstance.startPlay();
         }
@@ -220,7 +364,7 @@ public class Main extends PApplet {
         }
         if (gameState == "finished") {
             System.out.println("hello!");
-        }
+        }*/
     }
 
     // This project uses a modified version of jeremydouglass' solution for checking when multiple keys are pressed or held at once.
@@ -235,11 +379,27 @@ public class Main extends PApplet {
     // These properties are used to a) prevent holding buttons from hitting notes and b) check UP/DOWN inputs to change rows
 
     public void keyPressed() {
-        // Only set to true if the key is not blocked (preventing repeating keys without releasing them)
+        // Only check notes if the key is not blocked (preventing repeating keys without releasing them)
         if (!keys.getOrDefault(keyCode, false) && keyCode != UP && keyCode != DOWN) {
-            currentGameInstance.checkNote();
+            if (gameState == "playing") {
+                currentGameInstance.checkNote();
+            }
         }
+        // Set key pressed
         keys.put(keyCode, true);
+        // Menu input handling
+        if (gameState == "menu") {
+            switch (keyCode) {
+                case UP:
+                    currentMenu.navigate(true);
+                    break;
+                case DOWN:
+                    currentMenu.navigate(false);
+                    break;
+                case ENTER:
+                    currentMenu.confirm();
+            }
+        }
     }
 
     public void keyReleased() {

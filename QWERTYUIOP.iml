@@ -7,21 +7,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Programmes/processing-3.5.4/core/library/core.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="com.opencsv:opencsv:5.3" level="project" />
     <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Programmes/processing-3.5.4/core/sound/javamp3-1.0.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../Programmes/processing-3.5.4/core/sound/javamp3-1.0.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -30,7 +21,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Programmes/processing-3.5.4/core/sound/jsyn-20171016.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../Programmes/processing-3.5.4/core/sound/jsyn-20171016.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -39,7 +30,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Programmes/processing-3.5.4/core/sound/sound.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../Programmes/processing-3.5.4/core/sound/sound.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../Programmes/processing-3.5.4/core/library/core.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
