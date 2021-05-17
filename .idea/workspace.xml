@@ -3,9 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="e3725339-4f35-451f-b1b3-26b0100ec4fa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/QWERTYUIOP.iml" beforeDir="false" afterPath="$PROJECT_DIR$/QWERTYUIOP.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$Note.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$Note.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$gameInstance.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$gameInstance.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menu.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menu.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menuButton.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menuButton.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menuItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main$menuItem.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/QWERTYUIOP/org/neocities/ralcore/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/org/neocities/ralcore/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/neocities/ralcore/Main.java" afterDir="false" />
     </list>

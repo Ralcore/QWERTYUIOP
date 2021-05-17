@@ -124,6 +124,25 @@ public class Main extends PApplet {
                 gameEnd(true);
             }
             System.out.println(health);
+            if (health <= 0) {
+                gameState = "menu";
+                currentMenu = new menu();
+                currentMenu.addItem("dead");
+                currentMenu.addItem("");
+                currentMenu.addItem("retry", "startPlaying");
+                currentMenu.addItem("menu", "mainMenu");
+                currentMenu.addItem("quit", "quitGame");
+            } else if (!currentGameInstance.chartAudio.isPlaying()) {
+                gameState = "menu";
+                currentMenu = new menu();
+                currentMenu.addItem("win");
+                currentMenu.addItem("score:" + score);
+                currentMenu.addItem("");
+                currentMenu.addItem("retry", "startPlaying");
+                currentMenu.addItem("menu", "mainMenu");
+                currentMenu.addItem("quit", "quitGame");
+            }
+
         }
 
         public void gameEnd(Boolean failed) {
@@ -209,6 +228,7 @@ public class Main extends PApplet {
         }
 
         public void draw() {
+            background(80);
             for (int i = 0; i < items.length; i++) {
                 items[i].drawListItem(i, (i == selectedItem));
             }
@@ -227,14 +247,23 @@ public class Main extends PApplet {
         public void confirm() {
             switch (((menuButton) items[selectedItem]).itemAction) {
                 // The actions on the game's main menu
-                case "openSongScreen": break;
-                case "quitGame": break;
-                // Actions on the game's song select
-                case "openDiffScreen": break;
-                case "closeSongScreen": break;
-                // Actions on the game's difficulty select
-                case "startPlaying": break;
-                case "closeDiffScreen": break;
+                case "startPlaying":
+                    currentGameInstance = new gameInstance();
+                    currentGameInstance.startPlay();
+                    currentMenu = null;
+                    break;
+                case "mainMenu":
+                    gameState = "menu";
+                    currentMenu = new menu();
+                    currentMenu.addItem("qwertyuiop");
+                    currentMenu.addItem("(pronounced asdfghjkl)");
+                    currentMenu.addItem("");
+                    currentMenu.addItem("start game", "startPlaying");
+                    currentMenu.addItem("quit", "quitGame");
+                    break;
+                case "quitGame":
+                    exit();
+                    break;
                 case "itemAction":
                     System.out.println("hello");
                     break;
@@ -244,7 +273,6 @@ public class Main extends PApplet {
 
     public class menuItem {
         int[] defaultColor = {204, 136, 184};
-        static final int itemHeight = 32;
         String itemText;
 
         public menuItem() {
@@ -256,6 +284,7 @@ public class Main extends PApplet {
         };
 
         public void drawListItem(int itemPosition, boolean selected) {
+            textAlign(TOP, LEFT);
             // Draw with default text color.
             fill(defaultColor[0], defaultColor[1], defaultColor[2]);
             // Draw the text
@@ -341,29 +370,26 @@ public class Main extends PApplet {
     public void settings() {
         size(400, 400);
         smooth();
+        gameState = "menu";
         currentMenu = new menu();
-        currentMenu.addItem("Hello world!");
-        currentMenu.addItem("This is a button!", "itemAction");
-        currentMenu.addItem("This is a button!", "itemAction");
-        currentMenu.addItem("This is a button!", "itemAction");
-        currentMenu.addItem("This is a button!", "itemAction");
+        currentMenu.addItem("qwertyuiop");
+        currentMenu.addItem("(pronounced asdfghjkl)");
+        currentMenu.addItem("");
+        currentMenu.addItem("start game", "startPlaying");
+        currentMenu.addItem("quit", "quitGame");
     }
 
     public void draw() {
-
-        currentMenu.draw();
-/*        if (millis() > 100 && gameState != "playing") {
-            currentGameInstance = new gameInstance();
-            currentGameInstance.startPlay();
-        }
-        if (gameState == "playing") {
+        if (gameState == "menu") {
+            currentMenu.draw();
+        } else if (gameState == "playing") {
             currentGameInstance.gameTick();
         }
-        if (!currentGameInstance.chartAudio.isPlaying()) {
+/*        if (!currentGameInstance.chartAudio.isPlaying()) {
             gameState = "finished";
         }
         if (gameState == "finished") {
-            System.out.println("hello!");
+
         }*/
     }
 
